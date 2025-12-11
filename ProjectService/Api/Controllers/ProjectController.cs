@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace UserService.Controllers
+namespace ProjectService.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class ProjectController : ControllerBase
     {
 
     }
