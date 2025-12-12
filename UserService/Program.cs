@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Interfaces;
 using UserService.Infrastructure.Data;
+using UserService.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("UserDb")));
 
-builder.Services.AddScoped<IUserService, UserService.Application.Services.UserAppService>();
+builder.Services.AddScoped<IUserService, UserAppService>();
 
 var app = builder.Build();
 
