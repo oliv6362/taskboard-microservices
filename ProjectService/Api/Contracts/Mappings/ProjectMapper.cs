@@ -9,7 +9,8 @@ namespace ProjectService.Api.Contracts.Mappings
             new()
             {             
                 Name = dto.Name,
-                Description = dto.Description
+                Description = dto.Description,
+                OwnerUserId = dto.OwnerUserId
             };
     }
 }

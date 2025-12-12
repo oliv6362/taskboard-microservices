@@ -21,7 +21,7 @@ namespace ProjectService.Api.Controllers
         public async Task<IActionResult> GetProjectById(int id, CancellationToken ct)
         {
             var project = await projectService.GetProjectById(id, ct);
-            return Ok();
+            return Ok(project);
         }
     }
 }
