@@ -12,6 +12,10 @@ services:
     build:
       context: .
       dockerfile: ProjectService/Dockerfile
+    environment:
+      ConnectionStrings__ProjectDb: "Server=project-db;Database=ProjectDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    depends_on:
+      - project-db
     ports:
       - "8081:8080"
 
@@ -39,5 +43,18 @@ services:
     ports:
       - "14220:1433"
 
+  project-db:
+    image: "${DB_IMAGE}"
+    platform: "${DB_PLATFORM}"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${DB_PASSWORD}"
+      MSSQL_MEMORY_LIMIT_MB: "1024"
+    volumes:
+      - mssql-project:/var/opt/mssql
+    ports:
+      - "14221:1433"
+
 volumes:
   mssql-user:
+  mssql-project:
