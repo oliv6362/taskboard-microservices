@@ -20,5 +20,24 @@ services:
     build:
       context: .
       dockerfile: UserService/Dockerfile
+    environment:
+      ConnectionStrings__UserDb: "Server=user-db;Database=UserDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    depends_on:
+      - user-db
     ports:
       - "8082:8080"
+
+  user-db:
+    image: "${DB_IMAGE}"
+    platform: "${DB_PLATFORM}"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${DB_PASSWORD}"
+      MSSQL_MEMORY_LIMIT_MB: "1024"
+    volumes:
+      - mssql-user:/var/opt/mssql
+    ports:
+      - "14220:1433"
+
+volumes:
+  mssql-user:
