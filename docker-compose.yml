@@ -1,9 +1,13 @@
 services:
-  task-service:
-    image: task-service
+  assignment-service:
+    image: assignment-service
     build:
       context: .
-      dockerfile: TaskService/Dockerfile
+      dockerfile: AssignmentService/Dockerfile
+    environment:
+      ConnectionStrings__AssignmentDb: "Server=assignment-db;Database=AssignmentDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    depends_on:
+      - assignment-db
     ports:
       - "8080:8080"
 
@@ -55,6 +59,19 @@ services:
     ports:
       - "14221:1433"
 
+  assignment-db:
+    image: "${DB_IMAGE}"
+    platform: "${DB_PLATFORM}"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${DB_PASSWORD}"
+      MSSQL_MEMORY_LIMIT_MB: "1024"
+    volumes:
+      - mssql-assignment:/var/opt/mssql
+    ports:
+      - "14222:1433"
+
 volumes:
   mssql-user:
   mssql-project:
+  mssql-assignment:
