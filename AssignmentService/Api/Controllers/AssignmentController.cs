@@ -2,6 +2,7 @@ using AssignmentService.Api.Contracts.Dtos;
 using AssignmentService.Api.Contracts.Mappings;
 using AssignmentService.Application.Interfaces;
 using AssignmentService.Domain.Entities;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssignmentService.Api.Controllers
@@ -22,6 +23,20 @@ namespace AssignmentService.Api.Controllers
         public async Task<IActionResult> GetAssignmentById(int id, CancellationToken ct)
         {
             var assignment = await assignmentService.GetAssignmentById(id, ct);
+            return Ok(assignment);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAssignment(int id, [FromBody] UpdateAssignmentRequest assignmentRequest, CancellationToken ct)
+        {
+            var assignment = await assignmentService.GetAssignmentById(id, ct);
+            if (assignment is null)
+                return NotFound();
+
+            assignment.ApplyUpdate(assignmentRequest);
+
+            await assignmentService.UpdateAssignment(assignment, ct);
+
             return Ok(assignment);
         }
     }
