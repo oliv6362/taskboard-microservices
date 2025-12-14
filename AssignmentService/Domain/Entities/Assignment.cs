@@ -14,7 +14,12 @@
         public string? Description { get; set; }
         public AssignmentStatus Status { get; set; } = AssignmentStatus.ToDo;
         public int ProjectId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        public void MarkUpdated()
+        {
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

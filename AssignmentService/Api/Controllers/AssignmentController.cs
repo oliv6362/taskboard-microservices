@@ -19,15 +19,15 @@ namespace AssignmentService.Api.Controllers
             return Ok(created);
         }
 
-        [HttpGet]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAssignmentById(int id, CancellationToken ct)
         {
             var assignment = await assignmentService.GetAssignmentById(id, ct);
             return Ok(assignment);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAssignment(int id, [FromBody] UpdateAssignmentRequest assignmentRequest, CancellationToken ct)
+        [HttpPut("status/{id:int}")]
+        public async Task<IActionResult> UpdateAssignmentStatus(int id, [FromBody] UpdateAssignmentRequest assignmentRequest, CancellationToken ct)
         {
             var assignment = await assignmentService.GetAssignmentById(id, ct);
             if (assignment is null)
@@ -35,7 +35,7 @@ namespace AssignmentService.Api.Controllers
 
             assignment.ApplyUpdate(assignmentRequest);
 
-            await assignmentService.UpdateAssignment(assignment, ct);
+            await assignmentService.UpdateAssignmentStatus(assignment, ct);
 
             return Ok(assignment);
         }

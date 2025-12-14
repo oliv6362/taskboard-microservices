@@ -16,8 +16,9 @@ namespace AssignmentService.Application.Services
         public async Task<Assignment?> GetAssignmentById(int id, CancellationToken ct) =>
             await db.Assignments.FindAsync([id], ct);
 
-        public async Task<Assignment> UpdateAssignment(Assignment assignment, CancellationToken ct)
+        public async Task<Assignment> UpdateAssignmentStatus(Assignment assignment, CancellationToken ct)
         {
+            assignment.MarkUpdated();
             db.Update(assignment);
             await db.SaveChangesAsync(ct);
             return assignment;
