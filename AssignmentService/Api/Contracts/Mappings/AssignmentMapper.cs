@@ -13,7 +13,7 @@ namespace AssignmentService.Api.Contracts.Mappings
                 ProjectId = dto.ProjectId
             };
 
-        public static void ApplyUpdate (this Assignment assignment, UpdateAssignmentRequest dto)
+        public static void ApplyUpdate (this Assignment assignment, UpdateAssignmentStatusRequest dto)
         {
             assignment.Status = dto.Status;
         }

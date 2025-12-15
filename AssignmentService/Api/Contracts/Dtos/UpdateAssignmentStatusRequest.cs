@@ -2,7 +2,7 @@
 
 namespace AssignmentService.Api.Contracts.Dtos
 {
-    public record UpdateAssignmentRequest
+    public record UpdateAssignmentStatusRequest
     (
         AssignmentStatus Status
     );

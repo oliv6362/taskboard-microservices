@@ -9,10 +9,8 @@ namespace AssignmentService.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AssignmentController(IAssignmentService assignmentService) : ControllerBase
+    public class AssignmentController(IAssignmentService assignmentService, RestClient restClient ) : ControllerBase
     {
-        private static readonly RestClient restClient = new RestClient("http://project-service:8080");
-
         [HttpPost]
         public async Task<IActionResult> CreateAssignment([FromBody] CreateAssignmentRequest assignmentRequest, CancellationToken ct)
         {
@@ -34,7 +32,7 @@ namespace AssignmentService.Api.Controllers
 
             var assignment = assignmentRequest.ToEntity();
             var created = await assignmentService.CreateAssignment(assignment, ct);
-            return Ok(created);
+            return CreatedAtAction(nameof(GetAssignmentById), new { id = created.AssignmentId }, created);
         }
 
         [HttpGet("{id:int}")]
@@ -44,8 +42,8 @@ namespace AssignmentService.Api.Controllers
             return assignment is null ? NotFound() : Ok(assignment);
         }
 
-        [HttpPut("status/{id:int}")]
-        public async Task<IActionResult> UpdateAssignmentStatus(int id, [FromBody] UpdateAssignmentRequest assignmentRequest, CancellationToken ct)
+        [HttpPut("{id:int}/status")]
+        public async Task<IActionResult> UpdateAssignmentStatus(int id, [FromBody] UpdateAssignmentStatusRequest assignmentRequest, CancellationToken ct)
         {
             var assignment = await assignmentService.GetAssignmentById(id, ct);
             if (assignment is null)

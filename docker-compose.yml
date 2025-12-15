@@ -6,6 +6,7 @@ services:
       dockerfile: AssignmentService/Dockerfile
     environment:
       ConnectionStrings__AssignmentDb: "Server=assignment-db;Database=AssignmentDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
+      ServiceUrls__ProjectService: "http://project-service:8080"
     depends_on:
       - assignment-db
     ports:
@@ -18,6 +19,7 @@ services:
       dockerfile: ProjectService/Dockerfile
     environment:
       ConnectionStrings__ProjectDb: "Server=project-db;Database=ProjectDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
+      ServiceUrls__UserService: "http://user-service:8080"
     depends_on:
       - project-db
     ports:
