@@ -6,7 +6,7 @@ using UserService.Application.Interfaces;
 namespace UserService.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController(IUserService userService) : ControllerBase
     {
         [HttpPost]
@@ -22,7 +22,7 @@ namespace UserService.Api.Controllers
         public async Task<IActionResult> GetUserById(int id, CancellationToken ct)
         {   
             var user = await userService.GetUserById(id, ct);
-            return Ok(user);
+            return user is null ? NotFound() : Ok(user);
         }
     }
 }
