@@ -12,19 +12,19 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AssignmentService/AssignmentService.csproj", "AssignmentService/"]
-RUN dotnet restore "./AssignmentService/AssignmentService.csproj"
+COPY ["src/UserService/UserService.csproj", "src/UserService/"]
+RUN dotnet restore "./src/UserService/UserService.csproj"
 COPY . .
-WORKDIR "/src/AssignmentService"
-RUN dotnet build "./AssignmentService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/UserService"
+RUN dotnet build "./UserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AssignmentService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./UserService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AssignmentService.dll"]
+ENTRYPOINT ["dotnet", "UserService.dll"]

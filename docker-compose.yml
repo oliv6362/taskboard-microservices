@@ -3,7 +3,7 @@ services:
     image: assignment-service
     build:
       context: .
-      dockerfile: AssignmentService/Dockerfile
+      dockerfile: src/AssignmentService/Dockerfile
     environment:
       ConnectionStrings__AssignmentDb: "Server=assignment-db;Database=AssignmentDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
       ServiceUrls__ProjectService: "http://project-service:8080"
@@ -16,7 +16,7 @@ services:
     image: project-service
     build:
       context: .
-      dockerfile: ProjectService/Dockerfile
+      dockerfile: src/ProjectService/Dockerfile
     environment:
       ConnectionStrings__ProjectDb: "Server=project-db;Database=ProjectDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
       ServiceUrls__UserService: "http://user-service:8080"
@@ -29,7 +29,7 @@ services:
     image: user-service
     build:
       context: .
-      dockerfile: UserService/Dockerfile
+      dockerfile: src/UserService/Dockerfile
     environment:
       ConnectionStrings__UserDb: "Server=user-db;Database=UserDb;User ID=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;"
     depends_on:
