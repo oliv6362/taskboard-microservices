@@ -14,11 +14,11 @@ namespace UserService.Api.Controllers
         {
             var user = userRequest.ToEntity();
             var created = await userService.CreateUser(user, ct);
-            return Ok(created);
+            return CreatedAtAction(nameof(GetUserById), new { id = created.UserId }, created);
         }
-    
 
-        [HttpGet("{id}")]
+
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUserById(int id, CancellationToken ct)
         {   
             var user = await userService.GetUserById(id, ct);
