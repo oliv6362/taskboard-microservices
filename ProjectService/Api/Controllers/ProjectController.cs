@@ -9,10 +9,8 @@ namespace ProjectService.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProjectController(IProjectService projectService) : ControllerBase
-    {
-        private static readonly RestClient restClient = new RestClient("http://user-service:8080");
-        
+    public class ProjectController(IProjectService projectService, RestClient restClient) : ControllerBase
+    {        
         [HttpPost]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest projectRequest, CancellationToken ct)
         {
@@ -34,7 +32,7 @@ namespace ProjectService.Api.Controllers
 
             var project = projectRequest.ToEntity();
             var created = await projectService.CreateProject(project, ct);
-            return Ok(created);
+            return CreatedAtAction(nameof(GetProjectById), new { id = created.ProjectId }, created);
         }
 
         [HttpGet("{id:int}")]
