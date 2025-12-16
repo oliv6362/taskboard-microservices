@@ -1,4 +1,4 @@
-namespace ProjectService.ContractTests
+namespace UserService.ProviderContractTests
 {
     public class UnitTest1
     {
