@@ -28,6 +28,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.ProviderContrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectService.ProviderContractTests", "tests\ProjectService.ProviderContractTests\ProjectService.ProviderContractTests.csproj", "{7E6FAC53-31B1-4D46-9C3E-12A748D8FB41}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contracts", "contracts", "{55B88482-BD8B-4B42-A990-3A3DE276520D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pacts", "pacts", "{0849AB8C-25E1-44F9-87C1-C5197CC0015C}"
+	ProjectSection(SolutionItems) = preProject
+		contracts\pacts\ProjectService-UserService.json = contracts\pacts\ProjectService-UserService.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +154,7 @@ Global
 		{E161C68B-8741-4808-8D2A-7D4A5F37E62E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B2CCD24C-0930-4110-B202-C7FFCC3019D3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{7E6FAC53-31B1-4D46-9C3E-12A748D8FB41} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0849AB8C-25E1-44F9-87C1-C5197CC0015C} = {55B88482-BD8B-4B42-A990-3A3DE276520D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {52DC3635-90CE-4C9C-A559-29C00749039A}
