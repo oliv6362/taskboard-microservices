@@ -65,7 +65,6 @@ if (!app.Environment.IsEnvironment("ContractTest"))
     app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok("OK"));
