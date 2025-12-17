@@ -18,6 +18,9 @@ public class ProviderStatesController(UserDbContext db) : ControllerBase
     private const string State_User1Exists = "User with ID 1 exists";
     private const string State_User999Missing = "User with ID 999 does not exist";
 
+    private const int UserId_Exists = 1;
+    private const int UserId_Missing = 999;
+
     private const string Set_IDENTITY_INSERT_On = "SET IDENTITY_INSERT [User] ON;";
     private const string Set_IDENTITY_INSERT_Off = "SET IDENTITY_INSERT [User] OFF;";
 
@@ -43,7 +46,7 @@ public class ProviderStatesController(UserDbContext db) : ControllerBase
 
                     db.Users.Add(new User
                     {
-                        UserId = 1,
+                        UserId = UserId_Exists,
                         Username = "John",
                         Email = "JohnDoe@gmail.com",
                         CreatedAt = DateTime.UtcNow
@@ -54,13 +57,12 @@ public class ProviderStatesController(UserDbContext db) : ControllerBase
                 finally
                 {
                     await db.Database.ExecuteSqlRawAsync(Set_IDENTITY_INSERT_Off, ct);
-
                     await db.Database.CloseConnectionAsync();
                 }
                 return Ok();
 
             case State_User999Missing:
-                await db.Users.Where(u => u.UserId == 999).ExecuteDeleteAsync(ct);
+                await db.Users.Where(u => u.UserId == UserId_Missing).ExecuteDeleteAsync(ct);
                 return Ok();
 
             default:
