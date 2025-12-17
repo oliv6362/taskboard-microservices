@@ -31,6 +31,7 @@ public sealed class ProviderHost : IAsyncDisposable
     /// 
     /// The method blocks until the API reports itself as healthy or
     /// a timeout is reached.
+    /// </summary>
     public async Task StartAsync(CancellationToken ct = default)
     {
         Env.Load();

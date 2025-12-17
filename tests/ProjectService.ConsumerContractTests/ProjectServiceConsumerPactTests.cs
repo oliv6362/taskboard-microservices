@@ -8,8 +8,9 @@ using System.Net;
 /// ProjectService (consumer) and UserService (provider).
 ///
 /// These tests define the HTTP contract that ProjectService relies on
-/// when validating user existence via UserService. The contract is
-/// verified using Pact and executed against the real consumer
+/// when validating user existence via UserService. 
+/// 
+/// The contract is verified using Pact and executed against the real consumer
 /// implementation (UserServiceClient).
 /// </summary>
 public class ProjectServiceConsumerPactTests
