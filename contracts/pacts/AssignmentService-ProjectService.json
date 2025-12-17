@@ -1,0 +1,53 @@
+{
+  "consumer": {
+    "name": "AssignmentService"
+  },
+  "interactions": [
+    {
+      "description": "a request to get a missing project",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "Project with ID 999 does not exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/Project/999"
+      },
+      "response": {
+        "status": 404
+      },
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "description": "a request to get an existing project",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "Project with ID 1 exists"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/Project/1"
+      },
+      "response": {
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pactRust": {
+      "ffi": "0.4.27",
+      "models": "1.2.8"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "ProjectService"
+  }
+}
