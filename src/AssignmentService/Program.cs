@@ -2,7 +2,7 @@ using AssignmentService.Application.Interfaces;
 using AssignmentService.Application.Services;
 using AssignmentService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using RestSharp;
+using AssignmentService.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +18,12 @@ builder.Services.AddDbContext<AssignmentDbContext>(options =>
 builder.Services.AddScoped<IAssignmentService, AssignmentAppService>();
 
 // Configure RestClient for ProjectService
-builder.Services.AddSingleton(sp =>
+builder.Services.AddHttpClient<IProjectServiceClient, ProjectServiceClient>(http =>
 {
     var baseUrl = builder.Configuration["ServiceUrls:ProjectService"]
         ?? throw new InvalidOperationException("ProjectService URL not configured");
 
-    return new RestClient(baseUrl);
+    http.BaseAddress = new Uri(baseUrl);
 });
 
 var app = builder.Build();
@@ -38,6 +38,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok("OK"));
+
 app.Run();
+
+public partial class Program { }

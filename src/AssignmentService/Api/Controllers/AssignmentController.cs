@@ -2,33 +2,25 @@ using AssignmentService.Api.Contracts.Dtos;
 using AssignmentService.Api.Contracts.Mappings;
 using AssignmentService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
 using System.Net;
 
 namespace AssignmentService.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AssignmentController(IAssignmentService assignmentService, RestClient restClient ) : ControllerBase
+    public class AssignmentController(IAssignmentService assignmentService, IProjectServiceClient projectClient ) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> CreateAssignment([FromBody] CreateAssignmentRequest assignmentRequest, CancellationToken ct)
         {
-            //Fire-and-Hope
-            var request = new RestRequest($"/api/Project/{assignmentRequest.ProjectId}", Method.Get)
-            {
-                Timeout = TimeSpan.FromSeconds(2)
-            };
+            var status = await projectClient.GetProjectStatusAsync(assignmentRequest.ProjectId, ct);
 
-            RestResponse response;
-            response = await restClient.ExecuteAsync(request, ct);
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            if (status == HttpStatusCode.NotFound)
                 return BadRequest("Project does not exist.");
 
-            if (!response.IsSuccessful)
+            if (status != HttpStatusCode.OK)
                 return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    $"ProjectService returned {((int)response.StatusCode)} while validating ProjectId.");
+                    $"ProjectService returned {((int)status)} while validating ProjectId.");
 
             var assignment = assignmentRequest.ToEntity();
             var created = await assignmentService.CreateAssignment(assignment, ct);
