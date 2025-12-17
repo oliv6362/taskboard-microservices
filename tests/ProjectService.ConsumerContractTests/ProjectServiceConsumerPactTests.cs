@@ -12,7 +12,7 @@ using System.Net;
 /// verified using Pact and executed against the real consumer
 /// implementation (UserServiceClient).
 /// </summary>
-public class UserServiceConsumerPactTests
+public class ProjectServiceConsumerPactTests
 {
     private const string ConsumerName = "ProjectService";
     private const string ProviderName = "UserService";
