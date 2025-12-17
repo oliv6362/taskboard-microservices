@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectService.Application.Interfaces;
 using ProjectService.Application.Services;
 using ProjectService.Infrastructure.Data;
-using RestSharp;
+using ProjectService.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +18,12 @@ builder.Services.AddDbContext<ProjectDbContext>(options =>
 builder.Services.AddScoped<IProjectService, ProjectAppService>();
 
 // Configure RestClient for UserService
-builder.Services.AddSingleton(sp =>
+builder.Services.AddHttpClient<IUserServiceClient, UserServiceClient>(http =>
 {
     var baseUrl = builder.Configuration["ServiceUrls:UserService"]
         ?? throw new InvalidOperationException("UserService URL not configured");
 
-    return new RestClient(baseUrl);
+    http.BaseAddress = new Uri(baseUrl);
 });
 
 
@@ -42,3 +42,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok("OK"));
 app.Run();
+public partial class Program { }
