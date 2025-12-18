@@ -28,6 +28,35 @@ builder.Services.AddHttpClient<IProjectServiceClient, ProjectServiceClient>(http
 
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+if (app.Environment.IsEnvironment("ContractTest"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AssignmentDbContext>();
+
+    var migrated = false;
+    for (var i = 0; i < 10; i++)
+    {
+        try
+        {
+            logger.LogInformation("[ContractTest] Running DB migration (attempt {Attempt}/10)", i + 1);
+            db.Database.Migrate();
+            logger.LogInformation("[ContractTest] DB migrated");
+            migrated = true;
+            break;
+        }
+        catch (Exception ex) when (i < 9)
+        {
+            logger.LogWarning(ex, "[ContractTest] Migrate failed, retrying...");
+            Thread.Sleep(500);
+        }
+    }
+
+    if (!migrated)
+        throw new Exception("[ContractTest] Database migration failed after retries.");
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
@@ -36,7 +65,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.MapGet("/", () => Results.Redirect("/swagger"));
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsEnvironment("ContractTest"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseAuthorization();
 
 app.MapControllers();
