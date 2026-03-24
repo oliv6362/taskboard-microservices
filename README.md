@@ -1,72 +1,184 @@
-# TaskBoard Software System
+# TaskBoard Microservices
 
-Exam Project for the 2025 Software Integration course.
+Exam project for the 2025 **Software Integration** course.
 
-This project is a simple taskboard software system implemented using a microservice architecture.
+This repository contains a **TaskBoard software system** implemented as a **microservice-based .NET solution**.  
+The project focuses on how testing strategies can be applied in a distributed system, with particular emphasis on:
+
+- **Consumer-Driven Contract Testing (CDC)**
+- **End-to-End Testing (E2E)**
+
+The purpose of the project is to demonstrate how these two test approaches can be combined to validate both **service-to-service communication in isolation** and **complete workflows across multiple microservices**.
+
+---
+
+## System Overview
+
 The system consists of three microservices:
 
-- AssignmentService
-- ProjectService
-- UserService
+- `UserService`
+- `ProjectService`
+- `AssignmentService`
 
-The main focus of this project is testing, with emphasis on:
+Each service is responsible for its own bounded area of the domain and communicates with other services over HTTP.
 
-- Consumer-Driven Contract Testing (CDC)
-- End-To-End Testing (E2E)
+A typical workflow in the system is:
 
-## Consumer-Driven Contract Testing (CDC)
-Consumer-Driven Contract Testing focuses on verifying service-to-service communication by testing APIs from the consumer’s perspective.  
-The consumer defines the expected behavior of a provider’s API using contracts, and the provider verifies that its implementation matches those expectations.  
-This reduces the risk of breaking changes between services and increases confidence when deploying changes.  
+1. A user is created in `UserService`
+2. A project is created in `ProjectService` with that user as owner
+3. An assignment is created in `AssignmentService` for that project
+4. The assignment is retrieved again and validated
 
-### Usage in This Project  
-This project uses `PactNet` to implement Consumer-Driven Contract Testing between the microservices.
+This workflow forms the basis of the project’s end-to-end testing strategy.
 
-- **Four contract test projects are included:** two consumer test projects and two provider verification projects.
-- **The following service relationships are tested:**
-  - AssignmentService (consumer) → ProjectService (provider)
-  - ProjectService (consumer) → UserService (provider)
-- Consumer contract tests define the expected HTTP interactions and generate Pact files (contracts) using `PactNet`.
-- The real consumer client code is executed against a Pact-managed mock provider (HTTP server) to verify that the consumer behaves according to the defined contract.
-- Provider verification tests validate the generated contracts against the real provider API implementation.
-- Each provider exposes a `ProviderStatesController`, which prepares the database to a known state before verification.
+---
 
+## Testing Focus
 
-## End-To-End Testing (E2E)
-End-to-end testing focuses on validating the behavior of the system as a whole by exercising multiple microservices together through their real HTTP APIs.
+This project is centered around testing in a microservice architecture, where different test types provide different forms of confidence.
 
-While Consumer-Driven Contract Testing verifies that service interactions follow agreed contracts, E2E testing verifies that the complete workflow works correctly when all services, databases, and network communication are running together.
+### Consumer-Driven Contract Testing (CDC)
 
+CDC is used to verify **service interactions in isolation**.
 
-### Usage in This Project
-This project uses **xUnit** together with **Testcontainers** to execute end-to-end tests in an isolated Docker-based environment.
+In this approach, the **consumer** defines its expectations of a provider’s API in the form of a contract, and the **provider** verifies that its implementation satisfies that contract. This helps reduce the risk of breaking changes between independently developed services.
 
-The E2E test setup dynamically provisions the full TaskBoard system and includes:
+#### CDC relationships covered in this project
 
-- A dedicated Docker network
-- Three SQL Server containers
-- Three microservice containers:
+- `AssignmentService` (consumer) → `ProjectService` (provider)
+- `ProjectService` (consumer) → `UserService` (provider)
+
+#### How CDC is implemented
+
+This project uses **PactNet** for contract testing.
+
+For each service interaction, there are separate test projects for:
+
+- **consumer contract tests**
+- **provider verification tests**
+
+The consumer tests:
+
+- define expected HTTP interactions
+- execute the real consumer client code against a Pact mock server
+- generate Pact files that document the agreed contract
+
+The provider verification tests:
+
+- load the generated Pact files
+- run verification against the real provider API
+- prepare provider state before verification through a `ProviderStatesController`
+
+This allows service contracts to be validated without requiring the full system to be started.
+
+---
+
+## End-to-End Testing (E2E)
+
+E2E testing is used to verify the **system as a whole**.
+
+Where CDC focuses on isolated service interactions, E2E testing validates that the full workflow works correctly when all services, databases, and network communication are running together.
+
+This project uses **xUnit** together with **Testcontainers** to provision an isolated Docker-based test environment.
+
+### E2E environment
+
+The E2E test setup provisions:
+
+- a dedicated Docker network
+- three SQL Server containers
+- three microservice containers:
   - `UserService`
   - `ProjectService`
   - `AssignmentService`
 
-Each service runs in its own container and is connected through the shared Docker network using internal service names.
+The environment is started in dependency order so that databases are available before the services start.  
+Before the test runs, the fixture waits until each service responds successfully on its `/health` endpoint.
 
-The test fixture starts the environment in the correct dependency order:
+### E2E workflow covered
 
-1. Docker network
-2. database containers
-3. service containers
+The end-to-end test validates a complete user journey across the system:
 
-Before the tests execute, the fixture waits until each service responds successfully on its `/health` endpoint.  
-Once the services are healthy, their mapped base URLs are exposed to the test suite so the system can be exercised through real HTTP requests.
+1. Create a user
+2. Create a project for that user
+3. Create an assignment for that project
+4. Retrieve the assignment and verify the persisted data
 
-### User Journey Covered
-The E2E tests validate a complete user workflow across the microservices:
+This gives stronger confidence that the services work correctly together across service boundaries.
 
-1. A user is created in `UserService`
-2. A project is created in `ProjectService` using the created user as owner
-3. An assignment is created in `AssignmentService` using the created project
-4. The created assignment is retrieved again and verified against the expected persisted data
+---
 
-This verifies that the services work together correctly across service boundaries and that data flows through the system as expected.
+## Trade-offs Discussed in the Project
+
+A central part of the project is not only implementing tests, but also evaluating the trade-offs of the chosen strategy.
+
+### E2E trade-offs
+
+End-to-end tests provide high realism and strong confidence because they run against real services, databases, and network communication.  
+However, this comes at a cost:
+
+- slower feedback
+- more infrastructure setup
+- greater fragility
+- weaker scalability as the number of services grows
+
+In other words, E2E tests are valuable for validating important workflows, but they are less suitable as the primary feedback mechanism in larger microservice systems.
+
+### CDC trade-offs
+
+CDC tests provide faster feedback and make it easier to detect integration issues between services early.  
+They also support a higher degree of independent development and deployment, because services can be verified against contracts without running the full environment.
+
+However, CDC does **not** prove that the complete system works end-to-end.  
+For that reason, CDC and E2E should be seen as complementary rather than competing approaches.
+
+---
+
+## Technologies Used
+
+- .NET
+- xUnit
+- Testcontainers
+- PactNet
+- Docker
+- SQL Server
+
+---
+
+## Conclusion
+
+The project shows that an effective testing strategy for microservices should not rely on a single test type.
+
+Instead, the repository demonstrates a balanced approach where:
+
+- **E2E tests** are used selectively to validate important system workflows
+- **CDC tests** are used to validate service interactions in isolation
+
+Together, these approaches provide a better balance between:
+
+- confidence
+- feedback speed
+- isolation
+- deployability
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- .NET SDK
+- Docker
+- Docker Compose
+
+### Run the system
+
+```bash
+docker compose up --build
+```
+
+### Run the tests
+
+```bash
+dotnet test
+```
