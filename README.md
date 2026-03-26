@@ -171,14 +171,43 @@ Together, these approaches provide a better balance between:
 - Docker
 - Docker Compose
 
-### Run the system
+### Environment configuration
 
-```bash
-docker compose up --build
+Before running the application or the test suite, create the required `.env` files with the following values.
+
+#### Root `.env`
+
+Create a `.env` file in the repository root:
+
+```env
+DB_HOST=host.docker.internal
+DB_PORT=1433
+DB_USER=sa
+DB_PASSWORD=your-chosen-password
+DB_PLATFORM=linux/amd64
+DB_IMAGE=mcr.microsoft.com/mssql/server:2022-latest
 ```
+
+#### `tests/ProjectService.ProviderContractTests/.env`
+
+```env
+TEST_SQL_PASSWORD=your-chosen-password
+```
+
+#### `tests/Taskboard.E2ETests/.env`
+
+```env
+SA_USERNAME=sa
+SA_PASSWORD=your-chosen-password
+```
+
+#### `tests/UserService.ProviderContractTests/.env`
+```env
+TEST_SQL_PASSWORD=your-chosen-password
+```
+
+### Run the system
+`docker compose up --build`
 
 ### Run the tests
-
-```bash
-dotnet test
-```
+`dotnet test`
